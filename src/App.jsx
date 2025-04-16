@@ -6,7 +6,7 @@ import FileUpload from "./components/FileUpload";
 import MessageForm from "./components/MessageForm";
 import StatusIndicator from "./components/StatusIndicator";
 
-const API_BASE_URL = "http://localhost:3001";
+const API_BASE_URL = "https://whatsapp-backend-fqg0.onrender.com";
 
 function App() {
   const [phoneNumbers, setPhoneNumbers] = useState([]);
