@@ -6,6 +6,7 @@ import FileUpload from "./components/FileUpload";
 import MessageForm from "./components/MessageForm";
 import StatusIndicator from "./components/StatusIndicator";
 
+
 const API_BASE_URL = "https://whatsappbackend-production.up.railway.app";
 
 function App() {
