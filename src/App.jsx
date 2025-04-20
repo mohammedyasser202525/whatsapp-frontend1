@@ -6,7 +6,7 @@ import FileUpload from "./components/FileUpload";
 import MessageForm from "./components/MessageForm";
 import StatusIndicator from "./components/StatusIndicator";
 
-const API_BASE_URL = "https://whatsapp-backend-production-0ffb.up.railway.app";
+const API_BASE_URL = "https://whatsappbackend-production.up.railway.app";
 
 function App() {
   const [phoneNumbers, setPhoneNumbers] = useState([]);
