@@ -6,8 +6,7 @@ import FileUpload from "./components/FileUpload";
 import MessageForm from "./components/MessageForm";
 import StatusIndicator from "./components/StatusIndicator";
 
-
-const API_BASE_URL = "https://whatsappbackend-production.up.railway.app";
+const API_BASE_URL = "http://localhost:3002";
 
 function App() {
   const [phoneNumbers, setPhoneNumbers] = useState([]);
@@ -18,16 +17,21 @@ function App() {
   const [results, setResults] = useState(null);
   const [hasMedia, setHasMedia] = useState(false);
   const [qrCode, setQrCode] = useState(null);
-
+  const [country, setCountry] = useState("SA");
   useEffect(() => {
     checkStatus();
     const interval = setInterval(checkStatus, 5000);
     return () => clearInterval(interval);
   }, []);
 
+  const handleCountryChange = (dialCode) => {
+    setCountry(dialCode); // استخدم setCountry هنا
+  };
+
   const checkStatus = async () => {
     try {
       const response = await axios.get(`${API_BASE_URL}/status`);
+
       setStatus(response.data.status);
       setQrCode(response.data.qrCode);
     } catch (error) {
@@ -44,6 +48,7 @@ function App() {
       setMessage("");
       setMediaFiles([]);
       setHasMedia(false);
+      setCountry("");
     } catch (error) {
       toast.error("حدث خطأ أثناء قطع الاتصال");
     }
@@ -113,7 +118,7 @@ function App() {
         uploadedFiles.push({
           name: files[i].name,
           path: response.data.filePath,
-          type: files[i].type
+          type: files[i].type,
         });
       }
 
@@ -136,20 +141,25 @@ function App() {
     setIsLoading(true);
     try {
       let response;
-      
+
       if (mediaPath) {
         // Send single media file
         response = await axios.post(`${API_BASE_URL}/send-single-media`, {
           numbers: phoneNumbers,
           mediaPath,
-          caption: content
+          caption: content,
+          country: country,
         });
+
+        console.log("response", response);
       } else {
         // Send text message only
         response = await axios.post(`${API_BASE_URL}/send-bulk-messages`, {
           numbers: phoneNumbers,
-          message: content
+          message: content,
+          country: country,
         });
+        console.log("response", response);
       }
 
       setResults(response.data.results);
@@ -179,22 +189,23 @@ function App() {
 
     setIsLoading(true);
     try {
-      const mediaFilesWithCaptions = mediaFiles.map(file => ({
+      const mediaFilesWithCaptions = mediaFiles.map((file) => ({
         path: file.path,
-        caption: captions.unified || captions[file.path] || ''
+        caption: captions.unified || captions[file.path] || "",
       }));
 
       const payload = {
         numbers: phoneNumbers,
         message: message || undefined,
-        mediaFiles: mediaFilesWithCaptions
+        mediaFiles: mediaFilesWithCaptions,
+        country: country,
       };
 
       const response = await axios.post(
         `${API_BASE_URL}/send-bulk-messages`,
         payload
       );
-      
+
       setResults(response.data.results);
       const successCount = response.data.results.success.length;
       const failedCount = response.data.results.failed.length;
@@ -212,14 +223,14 @@ function App() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto space-y-8">
-        <Toaster 
+        <Toaster
           position="top-center"
           toastOptions={{
             duration: 4000,
             style: {
-              background: '#363636',
-              color: '#fff',
-              direction: 'rtl'
+              background: "#363636",
+              color: "#fff",
+              direction: "rtl",
             },
           }}
         />
@@ -243,6 +254,7 @@ function App() {
           onExcelUpload={handleExcelUpload}
           onMediaUpload={handleMediaUpload}
           onPhoneNumbersChange={handlePhoneNumbersChange}
+          onCountryChange={handleCountryChange}
         />
 
         <MessageForm
