@@ -6,7 +6,7 @@ import FileUpload from "./components/FileUpload";
 import MessageForm from "./components/MessageForm";
 import StatusIndicator from "./components/StatusIndicator";
 
-const API_BASE_URL = "http://localhost:3002";
+const API_BASE_URL = "http://localhost:3001";
 
 function App() {
   const [phoneNumbers, setPhoneNumbers] = useState([]);
@@ -25,7 +25,7 @@ function App() {
   }, []);
 
   const handleCountryChange = (dialCode) => {
-    setCountry(dialCode); // استخدم setCountry هنا
+    setCountry(dialCode);
   };
 
   const checkStatus = async () => {
@@ -143,7 +143,6 @@ function App() {
       let response;
 
       if (mediaPath) {
-        // Send single media file
         response = await axios.post(`${API_BASE_URL}/send-single-media`, {
           numbers: phoneNumbers,
           mediaPath,
@@ -153,7 +152,6 @@ function App() {
 
         console.log("response", response);
       } else {
-        // Send text message only
         response = await axios.post(`${API_BASE_URL}/send-bulk-messages`, {
           numbers: phoneNumbers,
           message: content,
