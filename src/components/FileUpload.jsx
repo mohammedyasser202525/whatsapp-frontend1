@@ -4,7 +4,12 @@ import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
 import "../App.css";
 
-function FileUpload({ onExcelUpload, onMediaUpload, onPhoneNumbersChange }) {
+function FileUpload({
+  onExcelUpload,
+  onMediaUpload,
+  onPhoneNumbersChange,
+  onCountryChange,
+}) {
   const [excelFile, setExcelFile] = useState(null);
   const [mediaFiles, setMediaFiles] = useState([]);
   const [phoneNumbers, setPhoneNumbers] = useState([
@@ -66,6 +71,11 @@ function FileUpload({ onExcelUpload, onMediaUpload, onPhoneNumbersChange }) {
       countryCode: data.dialCode,
     };
     setPhoneNumbers(newPhoneNumbers);
+
+    if (typeof onCountryChange === "function") {
+      onCountryChange(data.dialCode); // أرسل dialCode بدلًا من data.dialCode
+    }
+
     updateAllNumbers(newPhoneNumbers, excelNumbers);
   };
 
@@ -104,7 +114,7 @@ function FileUpload({ onExcelUpload, onMediaUpload, onPhoneNumbersChange }) {
               <div key={index} className="flex items-center gap-2">
                 <div className="flex-grow">
                   <PhoneInput
-                    country={"eg"}
+                    defaultCountry="eg"
                     value={`${phone.countryCode}${phone.number}`}
                     onChange={(value, data) =>
                       handlePhoneNumberChange(value, data, index)
